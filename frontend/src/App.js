@@ -12,7 +12,8 @@ class App extends React.Component {
       let res = await fetch('./isLoggedIn', {
         method: 'POST',
         headers: {
-
+          'Accept': 'Application/json',
+          'Content-type': 'application/json'
         }
       }) 
     }
