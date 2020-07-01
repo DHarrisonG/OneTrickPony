@@ -1,13 +1,15 @@
 import React from 'react';
 import './App.css';
-// import LoginForm from './LoginForm';
+import { observer } from 'mobx-react';
+
+import LoginForm from './LoginForm';
 // import InputField from './InputField';
-// import SubmitBUTTON from './SubmitButton';
-// import UserStore from './stores/UserStore'; 
+import SubmitButton from './SubmitButton';
+import UserStore from './stores/UserStore';
 
 class App extends React.Component {
 
-  async componentDidMount(){
+  async componentDidMount() {
     try {
       let res = await fetch('./isLoggedIn', {
         method: 'POST',
@@ -15,22 +17,96 @@ class App extends React.Component {
           'Accept': 'Application/json',
           'Content-type': 'application/json'
         }
-      }) 
+      })
+
+      let result = await res.json();
+
+      if (result && result.success) {
+        UserStore.loading = false;
+        UserStore.isLoggedIn = true;
+        UserStore.username = result.username;
+      }
+
+      else {
+        UserStore.loading = false
+        UserStore.isLoggedIn = false
+      }
+
     }
 
-    catch(e) {
+    catch (e) {
+      UserStore.loading = false;
+      UserStore.isLoggedIn = false;
+    }
+  }
 
+  async doLogout() {
+    try {
+      let res = await fetch('./logout', {
+        method: 'POST',
+        headers: {
+          'Accept': 'Application/json',
+          'Content-type': 'application/json'
+        }
+      })
+
+      let result = await res.json();
+
+      if (result && result.success) {
+        UserStore.isLoggedIn = false;
+        UserStore.username = '';
+
+      }
+
+    }
+
+    catch (e) {
+      console.log(e)
     }
   }
 
   render() {
-    return (
-      <div className="app">
-        <h1>Ayyyy lmao</h1>
-      </div>
-    );
+
+    if (UserStore.loading) {
+      return (
+        <div className="app">
+          <div className='container'>
+            Loading, please wait...
+          </div>
+        </div>
+      )
+    } 
+    
+    else {
+
+      if (UserStore.isLoggedIn) {
+        return (
+          <div className="app">
+            <div className='container'>
+              Welcome {UserStore.username}
+
+              <SubmitButton 
+                text={'Log Out'}
+                disabled={false}
+                onClick={() => this.doLogout()}
+              />
+            </div>
+          </div>
+        )
+      }
+
+      return (
+        <div className="app">
+          <div className='container'>
+            <LoginForm />
+          </div>
+        </div>
+      );
+    }
+
+    
   }
 
 }
 
-export default App;
+export default observer(App);
