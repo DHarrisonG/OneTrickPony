@@ -3,7 +3,6 @@ import './App.css';
 import { observer } from 'mobx-react';
 
 import LoginForm from './LoginForm';
-// import InputField from './InputField';
 import SubmitButton from './SubmitButton';
 import UserStore from './stores/UserStore';
 
@@ -15,7 +14,7 @@ class App extends React.Component {
         method: 'POST',
         headers: {
           'Accept': 'Application/json',
-          'Content-type': 'application/json'
+          'Content-Type': 'application/json'
         }
       })
 
@@ -75,8 +74,8 @@ class App extends React.Component {
           </div>
         </div>
       )
-    } 
-    
+    }
+
     else {
 
       if (UserStore.isLoggedIn) {
@@ -85,7 +84,7 @@ class App extends React.Component {
             <div className='container'>
               Welcome {UserStore.username}
 
-              <SubmitButton 
+              <SubmitButton
                 text={'Log Out'}
                 disabled={false}
                 onClick={() => this.doLogout()}
@@ -104,7 +103,7 @@ class App extends React.Component {
       );
     }
 
-    
+
   }
 
 }
